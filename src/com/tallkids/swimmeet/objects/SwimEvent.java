@@ -3,20 +3,20 @@
  */
 package com.tallkids.swimmeet.objects;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
+/*import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-import javax.persistence.Entity;
+import javax.jdo.annotations.PrimaryKey;*/
 
 /**
  * @author Paul
  *
  */
 
-@Entity
-public class Event {
-	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+/*@Entity*/
+public class SwimEvent 
+{
+	/*@PrimaryKey
+    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)*/
     private Long id;
 	private int eventNum = 0;
 	private String eventName = "";
