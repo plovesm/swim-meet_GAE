@@ -1,5 +1,6 @@
 package com.tallkids.swimmeet.app;
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,24 +22,39 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		String name = req.getParameter("name");
 		String method = req.getMethod();
 		
-		//resp.setContentType("text/xml");
+		resp.setContentType("text/html");
 		
-		resp.getWriter().println(buildXMLOutput(name, method));
+		resp.getWriter().println("<html><body>");//buildXMLOutput(name, method));
 		
-		Key personKey = ModelDAO.addEntity("Person");
+		Key personKey = null; 
 		Key votedOut = null;
+		List<Entity> results = null;
 		
-		if(ModelDAO.updateEntity(personKey, "name", name))
+		if( name != null && !name.isEmpty())
+		{
+			personKey = ModelDAO.addEntity("Person");
+			
+			if(personKey != null)
+			{
+				ModelDAO.updateEntity(personKey, "name", name);
+			}
+		}
+		
+		results = ModelDAO.getEntities("Person");
+		
+		if(results != null && results.size() > 0)
 		{
 			//Print the list			
-			System.out.println("Roll Call...");
-			for(Entity person : ModelDAO.getEntities("Person"))
+			resp.getWriter().println("Roll Call...<br />");
+			for(Entity person : results)
 			{
-				String personName =  person.getProperty("name").toString();
+				Object personName =  person.getProperty("name");
 				
-				System.out.println("Name: " + personName);
+				String strPersonName = (personName != null) ? personName.toString(): "BOOM";
+				resp.getWriter().println("Key: " + person.getKey() +
+										" Name: " + strPersonName + "<br />");
 				
-				if("Paul".equals(personName))
+				if("Paul".equals(strPersonName))
 				{
 					votedOut = person.getKey();
 				}
@@ -56,6 +72,12 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 			System.out.println("Paul is not on the list.");
 		}
 		
+		
+		resp.getWriter().println("<form action=\"http://localhost:8888/swim_meet\" method=\"get\">"
+				+ "<button type=\"submit\">Refresh</button>"
+				+ "</form>");
+		
+		resp.getWriter().println("</body></html>");
 	}
 
 	/**

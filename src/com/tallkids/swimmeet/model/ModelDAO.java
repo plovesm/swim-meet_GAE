@@ -14,12 +14,16 @@ import com.google.appengine.api.datastore.Query;
 
 public class ModelDAO 
 {
-
-	private static DatastoreService getDataStore()
+	
+	private static DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+	
+	/*private static DatastoreService getDataStore()
 	{
-		return DatastoreServiceFactory.getDatastoreService();
+		ds = (ds == null)? DatastoreServiceFactory.getDatastoreService() : ds;
+		
+		return ds;
 	}
-
+*/
 	/**
 	 * Adds an Entity passed in
 	 * @return boolean indicating success
@@ -28,7 +32,7 @@ public class ModelDAO
 	{
 		Key key = null;
 		
-		getDataStore().put(entity);
+		ds.put(entity);
 		
 		key = entity.getKey();
 		
@@ -45,7 +49,7 @@ public class ModelDAO
 		
 		Entity event = new Entity(kind);
 		
-		getDataStore().put(event);
+		ds.put(event);
 		
 		key = event.getKey();
 		
@@ -66,7 +70,7 @@ public class ModelDAO
 		event.setProperty("heatNum", "1");
 		event.setProperty("eventName", "Meet 1");
 
-		getDataStore().put(event);
+		ds.put(event);
 		
 		key = event.getKey();
 		
@@ -79,7 +83,7 @@ public class ModelDAO
 		try 
 		{
 			//First retrieve the entity
-			Entity ent = getDataStore().get(key);
+			Entity ent = ds.get(key);
 		
 			return ent;
 			
@@ -95,7 +99,7 @@ public class ModelDAO
 		try 
 		{
 			//First retrieve the entity
-			Entity ent = getDataStore().prepare(q).asSingleEntity();
+			Entity ent = ds.prepare(q).asSingleEntity();
 		
 			return ent;
 		} 
@@ -108,7 +112,7 @@ public class ModelDAO
 	public static List<Entity> getEntities(Query q)
 	{
 		//First retrieve the entity
-		List<Entity> results = getDataStore().prepare(q)
+		List<Entity> results = ds.prepare(q)
 				.asList(FetchOptions.Builder.withDefaults());
 			
 		return results;
@@ -195,7 +199,7 @@ public class ModelDAO
 	{
 		try
 		{
-			getDataStore().put(entity);
+			ds.put(entity);
 
 			return true;
 		}
@@ -215,7 +219,7 @@ public class ModelDAO
 
 		try
 		{
-			getDataStore().delete(key);
+			ds.delete(key);
 
 			return true;
 		}
