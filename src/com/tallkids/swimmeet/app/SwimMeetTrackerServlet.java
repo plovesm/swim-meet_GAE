@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
-import com.tallkids.swimmeet.model.ModelDAO;
+import com.tallkids.swimmeet.model.SwimEventDAO;
+import com.tallkids.swimmeet.objects.SwimEvent;
 
 @SuppressWarnings("serial")
 public class SwimMeetTrackerServlet extends HttpServlet {
@@ -29,6 +30,31 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		Key personKey = null; 
 		Key votedOut = null;
 		List<Entity> results = null;
+		
+		
+		SwimEventDAO seDAO = new SwimEventDAO();
+		
+		resp.getWriter().println("Adding SwimEvent...<br />");
+		SwimEvent se = seDAO.addSwimEvent();
+		System.out.println("Key: " + se.getId());
+		resp.getWriter().println("Starting ID: " + se.getId() +"<br />");
+		resp.getWriter().println("Starting Event Number: " + se.getEventNum() +"<br />");
+		resp.getWriter().println("Starting Heat Number: " + se.getHeatNum() +"<br />");
+		
+		resp.getWriter().println("Updating...<br />");
+		
+		se.setEventNum(se.getEventNum() + 1);
+		se.setHeatNum(se.getHeatNum() + 1);
+				
+		se = seDAO.updateSwimEvent(se);
+		
+		SwimEvent se2 = seDAO.getSwimEvent(seDAO.getSwimEvent(se.getId()));
+		
+		resp.getWriter().println("Ending ID: " + se2.getId() +"<br />");
+		resp.getWriter().println("Ending Event Number: " + se2.getEventNum() +"<br />");
+		resp.getWriter().println("Ending Heat Number: " + se2.getHeatNum() +"<br />");
+		
+		/*
 		
 		if( name != null && !name.isEmpty())
 		{
@@ -52,7 +78,11 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 				
 				String strPersonName = (personName != null) ? personName.toString(): "BOOM";
 				resp.getWriter().println("Key: " + person.getKey() +
-										" Name: " + strPersonName + "<br />");
+										" Name: " + strPersonName +
+										" Key Name: " + person.getKey().getName() + 
+										" ID: " + person.getKey().getId() +
+										" Namespace: " + person.getKey().getNamespace() + 
+										"<br />");
 				
 				if("Paul".equals(strPersonName))
 				{
@@ -71,7 +101,7 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		{
 			System.out.println("Paul is not on the list.");
 		}
-		
+		*/
 		
 		resp.getWriter().println("<form action=\"http://localhost:8888/swim_meet\" method=\"get\">"
 				+ "<button type=\"submit\">Refresh</button>"

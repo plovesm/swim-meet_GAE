@@ -17,13 +17,13 @@ public class ModelDAO
 	
 	private static DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 	
-	/*private static DatastoreService getDataStore()
+	public static DatastoreService getDataStore()
 	{
 		ds = (ds == null)? DatastoreServiceFactory.getDatastoreService() : ds;
 		
 		return ds;
 	}
-*/
+	
 	/**
 	 * Adds an Entity passed in
 	 * @return boolean indicating success
@@ -41,7 +41,7 @@ public class ModelDAO
 	
 	/**
 	 * Add an Entity by details
-	 * @return boolean indicating success
+	 * @return Key - key of the newly added event
 	 */
 	public static Key addEntity(String kind)
 	{

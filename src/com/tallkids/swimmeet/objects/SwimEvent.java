@@ -17,14 +17,15 @@ public class SwimEvent
 {
 	/*@PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)*/
-    private Long id;
+    private long id;
 	private int eventNum = 0;
 	private String eventName = "";
 	private int heatNum = 0;
-	public Long getId() {
+	
+	public long getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public int getEventNum() {
