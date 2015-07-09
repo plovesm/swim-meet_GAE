@@ -35,6 +35,9 @@ public class SwimEventDAO {
 		
 		event.setId(idKey);
 		
+		//Initialize
+		event = updateSwimEvent(event);
+		
 		return event;
 	}
 	public SwimEvent updateSwimEvent(SwimEvent event)

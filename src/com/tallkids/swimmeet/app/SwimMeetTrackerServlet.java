@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.tallkids.swimmeet.model.SwimEventDAO;
 import com.tallkids.swimmeet.objects.SwimEvent;
 
@@ -20,7 +22,39 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		 * 2. Retrieve Current SwimEvent/Heat
 		 * 3. Validate return type
 		 */
-		String name = req.getParameter("name");
+		
+		SwimEventDAO seDAO = new SwimEventDAO();
+		String eventId = req.getParameter("eventId");
+		SwimEvent se = null;
+		
+		if("new".equals(eventId))
+		{
+			se = seDAO.addSwimEvent();
+		}
+		else if (eventId != null && !eventId.isEmpty())
+		{
+			se = seDAO.getSwimEvent(seDAO.getSwimEvent(eventId));
+		}
+		else
+		{
+			se = seDAO.addSwimEvent();
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		try 
+		{
+			jsonObj.put("eventId", se.getId());
+			jsonObj.put("eventNum", se.getEventNum());
+			jsonObj.put("heatNum", se.getHeatNum());
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		resp.getWriter().println(jsonObj.toString());
+		
+		/*String name = req.getParameter("name");
 		String method = req.getMethod();
 		
 		resp.setContentType("text/html");
@@ -53,7 +87,7 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		resp.getWriter().println("Ending ID: " + se2.getId() +"<br />");
 		resp.getWriter().println("Ending Event Number: " + se2.getEventNum() +"<br />");
 		resp.getWriter().println("Ending Heat Number: " + se2.getHeatNum() +"<br />");
-		
+		*/
 		/*
 		
 		if( name != null && !name.isEmpty())
@@ -101,13 +135,14 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		{
 			System.out.println("Paul is not on the list.");
 		}
-		*/
+		
 		
 		resp.getWriter().println("<form action=\"http://localhost:8888/swim_meet\" method=\"get\">"
 				+ "<button type=\"submit\">Refresh</button>"
 				+ "</form>");
 		
 		resp.getWriter().println("</body></html>");
+		*/
 	}
 
 	/**
