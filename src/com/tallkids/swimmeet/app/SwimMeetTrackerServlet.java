@@ -7,8 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
+import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.tallkids.swimmeet.model.SwimEventDAO;
@@ -23,10 +22,58 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		 * 3. Validate return type
 		 */
 		
-		SwimEventDAO seDAO = new SwimEventDAO();
 		String eventId = req.getParameter("eventId");
-		SwimEvent se = null;
 		
+		//JSONObject jsonObj = buildJsonOutput(eventId);
+		
+		//resp.getWriter().println(jsonObj.toString());
+		resp.getWriter().println(buildEventList().toString());
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		/** TODO
+		 * 1. Validate security
+		 * 2. Ensure user has edit permissions
+		 * 3. Sanitize input
+		 * 4. Update values
+		 */
+		String eventId = req.getParameter("eventId");
+		String action = req.getParameter("action");
+		
+		if(action != null && !action.isEmpty())
+		{
+			updateSwimEvent(eventId, action);
+		}
+		
+		doGet(req, resp);
+	}
+	
+	private JSONArray buildEventList()
+	{
+		SwimEventDAO seDAO =  new SwimEventDAO();
+		JSONArray jsonArr = new JSONArray();
+		
+		List<SwimEvent> eventList = seDAO.getAllSwimEvents();
+		
+		for(SwimEvent se : eventList)
+		{
+			jsonArr.put(buildSwimEventJSONObj(se));
+		}
+		
+		return jsonArr;
+	}
+	
+	/**
+	 * @param eventId
+	 * @return
+	 */
+	private JSONObject buildJsonOutput(String eventId) {
+
+		SwimEventDAO seDAO =  new SwimEventDAO();
+		SwimEvent se = null;
+				
 		if("new".equals(eventId))
 		{
 			se = seDAO.addSwimEvent();
@@ -40,6 +87,15 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 			se = seDAO.addSwimEvent();
 		}
 		
+		return buildSwimEventJSONObj(se);
+	}
+
+	/**
+	 * @param se
+	 * @return
+	 */
+	private JSONObject buildSwimEventJSONObj(SwimEvent se) {
+		//take action on heat
 		JSONObject jsonObj = new JSONObject();
 		
 		try 
@@ -51,98 +107,47 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
-		resp.getWriter().println(jsonObj.toString());
-		
-		/*String name = req.getParameter("name");
-		String method = req.getMethod();
-		
-		resp.setContentType("text/html");
-		
-		resp.getWriter().println("<html><body>");//buildXMLOutput(name, method));
-		
-		Key personKey = null; 
-		Key votedOut = null;
-		List<Entity> results = null;
-		
+		return jsonObj;
+	}
+
+	/**
+	 * @param action
+	 * @return
+	 */
+	private boolean updateSwimEvent(String eventId, String action) {
 		
 		SwimEventDAO seDAO = new SwimEventDAO();
 		
-		resp.getWriter().println("Adding SwimEvent...<br />");
-		SwimEvent se = seDAO.addSwimEvent();
-		System.out.println("Key: " + se.getId());
-		resp.getWriter().println("Starting ID: " + se.getId() +"<br />");
-		resp.getWriter().println("Starting Event Number: " + se.getEventNum() +"<br />");
-		resp.getWriter().println("Starting Heat Number: " + se.getHeatNum() +"<br />");
-		
-		resp.getWriter().println("Updating...<br />");
-		
-		se.setEventNum(se.getEventNum() + 1);
-		se.setHeatNum(se.getHeatNum() + 1);
-				
-		se = seDAO.updateSwimEvent(se);
-		
-		SwimEvent se2 = seDAO.getSwimEvent(seDAO.getSwimEvent(se.getId()));
-		
-		resp.getWriter().println("Ending ID: " + se2.getId() +"<br />");
-		resp.getWriter().println("Ending Event Number: " + se2.getEventNum() +"<br />");
-		resp.getWriter().println("Ending Heat Number: " + se2.getHeatNum() +"<br />");
-		*/
-		/*
-		
-		if( name != null && !name.isEmpty())
+		//Short circuit since you can't update if we don't have the id
+		if (eventId != null && !eventId.isEmpty())
 		{
-			personKey = ModelDAO.addEntity("Person");
-			
-			if(personKey != null)
-			{
-				ModelDAO.updateEntity(personKey, "name", name);
-			}
+			return false;
 		}
 		
-		results = ModelDAO.getEntities("Person");
+		SwimEvent se = seDAO.getSwimEvent(seDAO.getSwimEvent(eventId));
 		
-		if(results != null && results.size() > 0)
+		//take action on event
+		if("eventInc".equals(action))
 		{
-			//Print the list			
-			resp.getWriter().println("Roll Call...<br />");
-			for(Entity person : results)
-			{
-				Object personName =  person.getProperty("name");
-				
-				String strPersonName = (personName != null) ? personName.toString(): "BOOM";
-				resp.getWriter().println("Key: " + person.getKey() +
-										" Name: " + strPersonName +
-										" Key Name: " + person.getKey().getName() + 
-										" ID: " + person.getKey().getId() +
-										" Namespace: " + person.getKey().getNamespace() + 
-										"<br />");
-				
-				if("Paul".equals(strPersonName))
-				{
-					votedOut = person.getKey();
-				}
-			}
+			se.setEventNum(se.getEventNum() + 1);
+		}
+		else if ("eventDec".equals(action))
+		{
+			se.setEventNum(se.getEventNum() - 1);
 		}
 		
-		if(votedOut != null)
+		//take action on event
+		if("heatInc".equals(action))
 		{
-			System.out.println("Sorry Paul, you were voted out...");
-			System.out.println("Result of delete: " + ModelDAO.deleteEntity(votedOut));
-			votedOut = null;
+			se.setHeatNum(se.getHeatNum() + 1);
 		}
-		else
+		else if ("heatDec".equals(action))
 		{
-			System.out.println("Paul is not on the list.");
+			se.setHeatNum(se.getHeatNum() - 1);
 		}
 		
-		
-		resp.getWriter().println("<form action=\"http://localhost:8888/swim_meet\" method=\"get\">"
-				+ "<button type=\"submit\">Refresh</button>"
-				+ "</form>");
-		
-		resp.getWriter().println("</body></html>");
-		*/
+		//Save it back in the case of a change
+		return (seDAO.updateSwimEvent(se) != null) ? true : false;
 	}
 
 	/**
@@ -162,15 +167,4 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 				+ "</xml>";
 	}
 	
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		/** TODO
-		 * 1. Validate security
-		 * 2. Ensure user has edit permissions
-		 * 3. Sanitize input
-		 * 4. Update values
-		 */
-		doGet(req, resp);
-	}
 }

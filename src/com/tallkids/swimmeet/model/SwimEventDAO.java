@@ -3,6 +3,9 @@
  */
 package com.tallkids.swimmeet.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
@@ -66,6 +69,22 @@ public class SwimEventDAO {
 		
 	}
 	
+	
+	public List<SwimEvent> getAllSwimEvents()
+	{
+		List<Entity> listE = null; 
+		List<SwimEvent> listSE = new ArrayList<SwimEvent>();
+		
+		listE = ModelDAO.getEntities("SwimEvent");
+		
+		for(Entity e : listE)
+		{
+			listSE.add(getSwimEvent(e));
+		}
+		
+		return listSE;
+	}
+	
 	public Entity getSwimEvent(String id)
 	{
 		return getSwimEvent(Long.parseLong(id));
@@ -83,9 +102,12 @@ public class SwimEventDAO {
 	public SwimEvent getSwimEvent(Entity swimEventEnt)
 	{
 		SwimEvent swimEvent = new SwimEvent();
-		System.out.println("Get: " + swimEventEnt);
-		int eventNum = Integer.parseInt(swimEventEnt.getProperty(SWIM_EVENT_EVENT_NUM).toString());
-		int heatNum = Integer.parseInt(swimEventEnt.getProperty(SWIM_EVENT_HEAT_NUM).toString());
+
+		Object eventNumProp = swimEventEnt.getProperty(SWIM_EVENT_EVENT_NUM);
+		Object heatNumProp = swimEventEnt.getProperty(SWIM_EVENT_HEAT_NUM);
+		
+		int eventNum = Integer.parseInt((eventNumProp == null) ? "0" : eventNumProp.toString());
+		int heatNum = Integer.parseInt((heatNumProp == null) ? "0" : heatNumProp.toString());
 		
 		swimEvent.setId(swimEventEnt.getKey().getId());
 		swimEvent.setEventNum(eventNum);
