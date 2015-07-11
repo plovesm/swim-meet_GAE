@@ -1,0 +1,81 @@
+@CHARSET "ISO-8859-1";
+
+.grad-ltblue 
+{
+/* height: 200px; */
+background: -webkit-linear-gradient(white, lightblue); /* For Safari 5.1 to 6.0 */
+background: -o-linear-gradient(white, lightblue); /* For Opera 11.1 to 12.0 */
+background: -moz-linear-gradient(white, lightblue); /* For Firefox 3.6 to 15 */
+background: linear-gradient(white, lightblue); /* Standard syntax (must be last) */
+}
+
+.grad-silver
+{
+/* height: 200px; */
+background: -webkit-linear-gradient(silver, grey); /* For Safari 5.1 to 6.0 */
+background: -o-linear-gradient(silver, grey); /* For Opera 11.1 to 12.0 */
+background: -moz-linear-gradient(silver, grey); /* For Firefox 3.6 to 15 */
+background: linear-gradient(silver, grey); /* Standard syntax (must be last) */
+}
+
+.number
+{
+	text-align: center;
+	font-size: 5em;
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	background: -webkit-linear-gradient(#999, #333);
+  	-webkit-background-clip: text;
+  	-webkit-text-fill-color: transparent;
+  	
+	/* color: -webkit-linear-gradient(white, blue); For Safari 5.1 to 6.0
+	color: -o-linear-gradient(white, blue); For Opera 11.1 to 12.0
+	color: -moz-linear-gradient(white, blue); For Firefox 3.6 to 15
+	color: linear-gradient(white, blue); Standard syntax (must be last) */
+}
+
+h1
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 2em;
+	text-align: center;
+	color: steelblue;
+	/* -webkit-text-stroke-width: 1px;
+   	-webkit-text-stroke-color: gray; */
+}
+
+.buttonBank
+{
+	text-align: center;
+	padding-top: 20px;
+}
+
+.buttonBank button
+{
+	height: 2em;
+  	width: 300px;
+	text-align: center;
+	font-size: 1.5em;
+	text-transform: uppercase;
+	font-family: Arial, Verdana, sans-serif;
+	font-weight: bold;
+	color: darkslategrey;
+	margin-bottom: 10px;
+}
+
+button.primary
+{
+	background: darkslategrey;
+	color: #ddd;
+}
+
+button.inc
+{
+	background: darkgreen;
+	color: #ddd;
+}
+
+button.dec
+{
+	background: maroon;
+	color: #ddd;
+}

@@ -23,11 +23,21 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		 */
 		
 		String eventId = req.getParameter("eventId");
+		String action = req.getParameter("action");
+
+		if(action != null && !action.isEmpty())
+		{
+			updateSwimEvent(eventId, action);
+		}
 		
-		//JSONObject jsonObj = buildJsonOutput(eventId);
-		
-		//resp.getWriter().println(jsonObj.toString());
-		resp.getWriter().println(buildEventList().toString());
+		if("list".equals(eventId))
+		{
+			resp.getWriter().println(buildEventList().toString());	
+		}
+		else
+		{
+			resp.getWriter().println(buildJsonOutput(eventId).toString());
+		}
 	}
 
 	@Override
@@ -39,14 +49,6 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		 * 3. Sanitize input
 		 * 4. Update values
 		 */
-		String eventId = req.getParameter("eventId");
-		String action = req.getParameter("action");
-		
-		if(action != null && !action.isEmpty())
-		{
-			updateSwimEvent(eventId, action);
-		}
-		
 		doGet(req, resp);
 	}
 	
@@ -117,15 +119,15 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 	private boolean updateSwimEvent(String eventId, String action) {
 		
 		SwimEventDAO seDAO = new SwimEventDAO();
-		
+
 		//Short circuit since you can't update if we don't have the id
-		if (eventId != null && !eventId.isEmpty())
+		if (eventId == null || eventId.isEmpty())
 		{
 			return false;
 		}
 		
 		SwimEvent se = seDAO.getSwimEvent(seDAO.getSwimEvent(eventId));
-		
+
 		//take action on event
 		if("eventInc".equals(action))
 		{
@@ -145,26 +147,8 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		{
 			se.setHeatNum(se.getHeatNum() - 1);
 		}
-		
 		//Save it back in the case of a change
 		return (seDAO.updateSwimEvent(se) != null) ? true : false;
 	}
 
-	/**
-	 * @param name
-	 * @param method
-	 * @return
-	 */
-	private String buildXMLOutput(String name, String method) {
-		return "<xml>"
-				+ "<title>Hello, world</title>"
-				+ "<name>"
-				+ name
-				+ "</name>"
-				+ "<method>"
-				+ method
-				+ "</method>"
-				+ "</xml>";
-	}
-	
 }
