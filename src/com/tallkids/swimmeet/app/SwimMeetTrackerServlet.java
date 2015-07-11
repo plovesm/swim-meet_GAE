@@ -25,7 +25,7 @@ public class SwimMeetTrackerServlet extends HttpServlet {
 		String eventId = req.getParameter("eventId");
 		String action = req.getParameter("action");
 
-		if(action != null && !action.isEmpty())
+		if(action != null && !action.isEmpty() && ! "new".equals(eventId))
 		{
 			updateSwimEvent(eventId, action);
 		}

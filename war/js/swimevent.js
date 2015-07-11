@@ -2,7 +2,7 @@ function loadResponse(methodIn, urlIn, parmsIn, callbackIn)
 {
 	var xmlhttp;
 	var method = (methodIn == null) ? "GET" : methodIn;
-	var url = (urlIn == null) ? "http://localhost:8888/swim_meet" : urlIn;
+	var url = (urlIn == null) ? "/swim_meet" : urlIn;
 	var parms = (parmsIn == null) ? "" : parmsIn;
 	var callback = (callbackIn == null) ? function(){} : callbackIn;
 	
@@ -28,17 +28,29 @@ function loadResponse(methodIn, urlIn, parmsIn, callbackIn)
 	xmlhttp.send();
 }
 
-function updateAction (eventId, action)
+function updateAction (action)
 {
+	var eventId = "list";
 	var callback = function(responseText)
 	{
 		var response = responseText;
 		var swimeventObj = JSON.parse(response);
 		
-		setNumbers(swimeventObj.eventNum, swimeventObj.heatNum);
-		
+		if(swimeventObj[0])
+		{
+			setNumbers(swimeventObj[0].eventNum, swimeventObj[0].heatNum);
+		}
+		else
+		{
+			setNumbers(swimeventObj.eventNum, swimeventObj.heatNum);
+		}
 	};
 	
+	if(document.getElementById("eventId"))
+	{
+		eventId = document.getElementById("eventId").value;
+	}
+	alert("EventId: " + eventId + " , Action: " + action)
 	loadResponse("GET", null, "?eventId="+eventId+"&action="+action, callback);
 }
 
@@ -57,19 +69,58 @@ function decrementHeat ()
 {
 }
 
+function refreshEvent()
+{
+	var eventId = "list";
+	var callback = function(responseText)
+	{
+		var response = responseText;
+		var swimeventObj = JSON.parse(response);
+		
+		if(swimeventObj[0])
+		{
+			setNumbers(swimeventObj[0].eventNum, swimeventObj[0].heatNum);
+		}
+		else
+		{
+			setNumbers(swimeventObj.eventNum, swimeventObj.heatNum);
+		}
+	};
+	
+	if(document.getElementById("eventId"))
+	{
+		eventId = document.getElementById("eventId").value;
+	}
+	
+	loadResponse("GET", null, "?eventId="+eventId, callback);
+}
 
-function initEvent (eventId)
+function initEvent()
 {
 	var callback = function(responseText)
 	{
 		var response = responseText;
 		var swimeventObj = JSON.parse(response);
 		
-		setNumbers(swimeventObj.eventNum, swimeventObj.heatNum);
 		
+		if(swimeventObj[0])
+		{
+			setEventId(swimeventObj[0].eventId);
+			setNumbers(swimeventObj[0].eventNum, swimeventObj[0].heatNum);
+		}
+		else
+		{
+			setEventId(swimeventObj.eventId);
+			setNumbers(swimeventObj.eventNum, swimeventObj.heatNum);
+		}
 	};
 	
-	loadResponse("GET", null, "?eventId="+eventId, callback);
+	loadResponse("GET", null, "?eventId=list", callback);
+}
+
+function setEventId(eventId)
+{
+	document.getElementById("eventId").value = eventId;
 }
 
 function setNumbers(eventNum, heatNum)

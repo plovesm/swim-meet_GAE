@@ -9,29 +9,30 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Swim Meet Event Tracker</title>
     <link rel="stylesheet" type="text/css" href="css/swimevent.css" />
   </head>
 
   <body class="grad-ltblue">
-    
+    <input type="hidden" id="eventId" value="" />
 	<h1>Event Number</h1>
 	<div id="eventNum" class="number">0</div>
 	
 	<div class="buttonBank">
-		<button onclick="updateAction('6649846324789248', 'eventInc');" class="inc">+ 1</button>
-		<button onclick="updateAction('6649846324789248', 'eventDec');" class="dec">- 1</button>
+		<button onclick="updateAction('eventInc');" class="inc">+ 1</button>
+		<button onclick="updateAction('eventDec');" class="dec">- 1</button>
 	</div>
 	
 	<h1>Heat Number</h1>
 	<div id="heatNum" class="number">0</div>
 	
 	<div class="buttonBank">
-		<button onclick="updateAction('6649846324789248', 'heatInc');" class="inc">+ 1</button>
-		<button onclick="updateAction('6649846324789248', 'heatDec');" class="dec">- 1</button>
+		<button onclick="updateAction('heatInc');" class="inc">+ 1</button>
+		<button onclick="updateAction('heatDec');" class="dec">- 1</button>
 	</div>
 	
 	<script src="js/swimevent.js" type="text/javascript"></script>
-	<script type="text/javascript">initEvent('6649846324789248');</script>
+	<script type="text/javascript">initEvent();</script>
   </body>
 </html>
